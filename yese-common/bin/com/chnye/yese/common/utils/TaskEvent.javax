@@ -1,0 +1,30 @@
+package com.chnye.yese.common.utils;
+
+//http://grepcode.com/file/repo1.maven.org/maven2/org.battelle/clodhopper-core/1.0.0/org/battelle/clodhopper/task/TaskEvent.java?av=f
+
+/*
+* @Author: anchen
+* @Date:   2016-01-18 00:53:03
+* @Last Modified by:   anchen
+* @Last Modified time: 2016-01-19 20:19:19
+*/
+
+public class TaskEvent extends EventObject {
+
+    private String msg;
+
+    public TaskEvent( Task<?> src, String msg ){
+        super( src );
+        this.msg = msg;
+    }
+
+    public Task<?> getTask(){
+        return (Task<?>) getSource();
+    }
+
+    public String getMessage(){
+        return msg != null ? msg : "";
+    }
+
+
+}

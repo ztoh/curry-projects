@@ -1,0 +1,5 @@
+rootProject.name = 'chnye-yese-engine'
+include ':common'
+project(':common').projectDir= new File(settingsDir,"../yese-common")
+include ':framework'
+project(':framework').projectDir= new File(settingsDir,"../yese-framework")

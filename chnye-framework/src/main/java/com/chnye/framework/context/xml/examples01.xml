@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<head>
+		<TransCode>2001</TransCode>
+		<TransDate>20161214</TransDate>
+		<TransTime>120400</TransTime>
+		<SeqNo>32334534</SeqNo>
+	</head>
+	<body>
+		<Result>00</Result>
+		<Message>交易成功</Message>
+		<Bak1>备用字段</Bak1>
+		<book>
+			<name>Head First设计模式</name>
+			<price>34.21</price>
+			<Location>武汉</Location>
+		</book>
+		<book>
+			<name>企业架构模式</name>
+			<price>53.23</price>
+			<Location>北京</Location>
+		</book>
+	</body>
+</root>

@@ -1,0 +1,115 @@
+
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+  //JVM版本
+  sourceCompatibility = 1.7
+  targetCompatibility = 1.7
+
+   //编码
+  [compileJava,compileTestJava,javadoc]*.options*.encoding = 'UTF-8'
+
+ext {
+    springVersion = '4.1.7.RELEASE'
+    slf4jVersion = '1.7.12'
+    logbackVersion = '1.1.2'
+    junitVersion = '4.11'
+    
+    commondbcpVersion = '1.4'
+    mybatisVersion = '3.3.0'
+    mysqlVersion = '5.1.29'
+    jacksonVersion = '2.6.3'
+    
+    lang3Version = '3.3.2'
+    commonsIOVersion = '2.4'
+    guavaVersion = '18.0'
+    
+}
+
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+
+jar {
+  	manifest {
+  	  attributes("Implementation-Title": "$project.name",
+  	      "Implementation-Version": "$version",
+  	      "Implementation-Vendor": "CHNYE",
+  	      "Built-By":"Bolon Zhang",
+  	      "Buiilt-Date": new Date().getDateTimeString(),
+  	      "Built-With": "gradle-${project.getGradle().getGradleVersion()}, groovy-${GroovySystem.getVersion()}",
+          "Created-By": 'Java ' + System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')'
+  	  )
+  	}
+}
+
+//通用依赖
+dependencies {
+  	compile(
+
+  		"org.slf4j:slf4j-api:$slf4jVersion",
+  		"ch.qos.logback:logback-classic:$logbackVersion",
+  		"org.logback-extensions:logback-ext-spring:0.1.2",
+  		"org.slf4j:jcl-over-slf4j:$slf4jVersion",
+  		
+  		"org.apache.commons:commons-lang3:$lang3Version",
+		"commons-io:commons-io:$commonsIOVersion",
+  		"com.google.guava:guava:$guavaVersion",
+
+		"org.springframework:spring-context:$springVersion",
+  		"org.springframework:spring-core:$springVersion",
+  		"org.springframework:spring-beans:$springVersion"
+  	)
+
+	//基础gradle项目依赖
+    compile project(':common')
+    compile project(':framework')
+    
+  	// 依赖mave中不存在的jar
+    ext.jarTree = fileTree(dir: 'libs', include: '**/*.jar')
+    ext.rootProjectLibs = new File(rootProject.rootDir, 'thirdparty').getAbsolutePath()
+    ext.jarTree += fileTree(dir: rootProjectLibs, include: '**/*.jar')
+    compile jarTree
+
+    // 测试依赖
+    testCompile(
+        "org.springframework:spring-test:$springVersion",
+        "junit:junit:$junitVersion"
+    )
+}
+
+
+// 显示当前项目下所有用于 compile 的 jar.
+task listJars(description: 'Display all compile jars.') << {
+    configurations.compile.each { File file -> println file.name }
+}
+
+task mkSrcDirs <<{
+    println "mkSrcDirs $project.name"
+    sourceSets.each {
+      println "<---mkdir:"+it+"--->"
+      it.java.srcDirs.each {
+	     it.mkdirs()
+      }
+      it.resources.srcDirs.each {
+	     it.mkdirs()
+      }
+   }
+}
+
+
+jar {
+    baseName = 'yese-engine-common'
+    version =  '0.1.0'
+}
+
+
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.9'
+}

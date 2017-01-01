@@ -1,0 +1,42 @@
+package com.chnye.yese.common.dispatch;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import com.chnye.yese.common.function.ThrowableFunction;
+
+public class DefaultAsyncDispatcher<T, O, E extends Throwable> implements ThrowableFunction<T, O, E> {
+
+	
+	private LinkedBlockingQueue<T> dataQueue;
+	private ExecutorService executorService;
+	private int WORKER_COUNT = 30;
+	private WorkSchedule<T>[]  workerArray;
+	
+	private DefaultSyncDispatcher<T,O, E> syncDispatcher;
+	
+	public DefaultAsyncDispatcher( DefaultSyncDispatcher<T,O, E> syncDispatcher ){
+		this.syncDispatcher = syncDispatcher;
+	}
+	
+	public void init(){
+		this.dataQueue = new LinkedBlockingQueue<>();
+		
+		this.executorService = Executors.newFixedThreadPool( WORKER_COUNT );
+		
+		workerArray = new WorkSchedule[ WORKER_COUNT ];
+		for( int i = 0; i < WORKER_COUNT ; i++ ){
+			workerArray[i] = new WorkSchedule<T>(dataQueue, syncDispatcher);
+			executorService.submit( workerArray[i] );
+		}
+	}
+	
+	@Override
+	public O apply(T input) throws E {
+		// TODO Auto-generated method stub
+		dataQueue.add( input );
+		return null;
+	}
+
+}

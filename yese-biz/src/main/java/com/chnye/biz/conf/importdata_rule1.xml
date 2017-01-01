@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entities key="importdata_rule1" type="importrule" desc="描述一个导入规则">
+
+
+<entity key="begin" type="tablerule" desc="规则起点">
+    <map>
+    	<!-- 其实期望的格式是<key>value</key> 即<dbName>zhangsan</dbName>  -->
+        <item key="next" >tablerule01</item>
+    </map>
+</entity>
+<entity key="tablerule01" type="tablerule" desc="描述表的映射规则">
+    <map>
+        <item key="src" >com/chnye/biz/conf/table_rule1.xml</item>
+		<item key="next" >tablerule02</item>
+    </map>
+</entity>
+<entity key="tablerule02" type="tablerule" desc="描述表的映射规则">
+    <map>
+        <item key="src" >com/chnye/biz/conf/table_rule2.xml</item>
+		<item key="next" >end</item>
+    </map>
+</entity>
+<entity key="end" type="tablerule" desc="规则终点">
+</entity>
+
+
+</entities>

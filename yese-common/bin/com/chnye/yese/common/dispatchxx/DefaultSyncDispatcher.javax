@@ -1,0 +1,51 @@
+package com.chnye.yese.common.dispatch;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+public class DefaultSyncDispatcher<T, O, E extends Throwable> implements SyncDispatcher<T, O, E>{
+
+	private List<AcceptHandler> handlers = new ArrayList<AcceptHandler>();
+	private ReadWriteLock lock = new ReentrantReadWriteLock();
+	
+	@Override
+	public O apply(T input) throws E {
+		// TODO Auto-generated method stub
+		O result = null;
+		for( AcceptHandler<T, O, E> handler : handlers ){
+			if( handler != null && handler.accept(input) ){
+				result = handler.apply( input );
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public void addHandler(AcceptHandler handler) {
+		// TODO Auto-generated method stub
+		lock.writeLock().lock();
+		try{
+			if( !handlers.contains( handler ) ){
+				handlers.add(  handler );
+			}
+		} finally {
+			lock.writeLock().unlock();
+		}
+	}
+
+	@Override
+	public void removeHandler(AcceptHandler handler) {
+		// TODO Auto-generated method stub
+		lock.writeLock().lock();
+		try{
+			if( handlers.contains( handler ) ){
+				handlers.remove( handler );
+			}
+		} finally {
+			lock.writeLock().unlock();
+		}
+	}
+
+}

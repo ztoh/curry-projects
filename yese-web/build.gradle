@@ -1,0 +1,215 @@
+buildscript {
+	repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.akhikhl.gretty:gretty:+'
+    }
+}
+
+
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'eclipse-wtp'
+apply plugin: 'idea'
+apply plugin: 'war'
+
+apply plugin: 'org.akhikhl.gretty'
+
+
+  //JVM版本
+  sourceCompatibility = 1.7
+  targetCompatibility = 1.7
+
+
+
+//eclipse 配置
+eclipse {
+    wtp {
+        component {
+            contextPath = "WebContent"
+            deployName = "finance"
+            resource sourcePath: 'src/main/java', deployPath: '/WEB-INF/classes'
+            resource sourcePath: 'WebContent', deployPath: '/'
+            resource sourcePath: '/remote', deployPath: '/WEB-INF/classes'
+        }
+    }
+}
+
+
+  
+   //编码
+  [compileJava,compileTestJava,javadoc]*.options*.encoding = 'UTF-8'  
+  
+ext {
+    tomcatVersion = '7.0.57'
+    springVersion = '4.1.7.RELEASE'
+    slf4jVersion = '1.7.12'
+    logbackVersion = '1.1.2'
+    junitVersion = '4.11'
+    
+    
+    commondbcpVersion = '1.4'
+    mybatisVersion = '3.3.0'
+    mysqlVersion = '5.1.29'
+    jacksonVersion = '2.6.3'
+    shiroVersion = '1.2.3'
+    springDataJpaVersion = '1.7.1.RELEASE'
+    
+    lang3Version = '3.3.2'
+    guavaVersion = '18.0'
+    commonsIOVersion = '2.4'
+    
+}
+
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+
+jar {
+  	manifest {
+  	  attributes("Implementation-Title": "$project.name",
+  	      "Implementation-Version": "$version",
+  	      "Implementation-Vendor": "CHNYE",
+  	      "Built-By":"Bolon Zhang",
+  	      "Buiilt-Date": new Date().getDateTimeString(),
+  	      "Built-With": "gradle-${project.getGradle().getGradleVersion()}, groovy-${GroovySystem.getVersion()}",
+          "Created-By": 'Java ' + System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')'
+  	  )
+  	}
+}
+
+//通用依赖
+dependencies {
+  	compile(
+  	   
+  		"org.slf4j:slf4j-api:$slf4jVersion",
+  		"ch.qos.logback:logback-classic:$logbackVersion",
+  		"org.logback-extensions:logback-ext-spring:0.1.2",
+  		"org.slf4j:jcl-over-slf4j:$slf4jVersion",
+  		
+  		"org.apache.commons:commons-lang3:$lang3Version",
+		"commons-io:commons-io:$commonsIOVersion",
+  		"com.google.guava:guava:$guavaVersion",
+
+		"org.springframework:spring-context:$springVersion",
+  		"org.springframework:spring-context-support:$springVersion",
+  		"org.springframework:spring-core:$springVersion",
+  		"org.springframework:spring-beans:$springVersion",
+  		"org.springframework:spring-jdbc:$springVersion",
+  		"org.springframework:spring-web:$springVersion",
+  		"org.springframework:spring-webmvc:$springVersion",
+  		"org.springframework:spring-aop:$springVersion",
+  		"org.springframework:spring-aspects:$springVersion",
+  		"org.springframework:spring-tx:$springVersion",
+  		"org.springframework:spring-jms:$springVersion",
+  		"org.springframework:spring-oxm:$springVersion",
+  		"org.springframework.data:spring-data-rest-webmvc:2.0.0.RELEASE",
+  		
+  		"com.fasterxml.jackson.core:jackson-databind:$jacksonVersion",
+		"com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion",
+
+  		"org.apache.shiro:shiro-core:$shiroVersion",
+		"org.apache.shiro:shiro-spring:$shiroVersion",
+
+		"org.springframework.data:spring-data-jpa:$springDataJpaVersion",
+
+  		"commons-dbcp:commons-dbcp:$commondbcpVersion",
+  		"org.mybatis:mybatis:$mybatisVersion",
+  		"org.mybatis:mybatis-spring:1.2.2",
+  		"com.github.miemiedev:mybatis-paginator:1.2.17",
+  		"mysql:mysql-connector-java:$mysqlVersion",
+  		
+  		"com.alibaba:druid:0.2.23",
+  		"org.hibernate:hibernate-core:4.3.10.Final",
+  		"org.hibernate:hibernate-entitymanager:4.3.10.Final"
+  		
+
+  	)
+  	
+	//基础gradle项目依赖
+    compile project(':common')
+    compile project(':framework')
+    compile project(':biz')
+    
+  	providedCompile(  
+      	"javax.servlet:javax.servlet-api:3.1.0",  
+      	"javax.servlet.jsp:jsp-api:2.2.1-b03",  
+      	"javax.servlet.jsp.jstl:javax.servlet.jsp.jstl-api:1.2.1"  
+  	)
+  		
+  	// 依赖mave中不存在的jar
+    ext.jarTree = fileTree(dir: 'libs', include: '**/*.jar')
+    ext.rootProjectLibs = new File(rootProject.rootDir, 'thirdparty').getAbsolutePath()
+    ext.jarTree += fileTree(dir: rootProjectLibs, include: '**/*.jar')
+    compile jarTree
+    
+    // 测试依赖
+    testCompile(  
+        "org.springframework:spring-test:$springVersion",  
+        "junit:junit:$junitVersion"
+    )     
+}
+
+	processResources{
+	  from("%projectDir/src/main/resources")
+	}
+	
+// 显示当前项目下所有用于 compile 的 jar.
+task listJars(description: 'Display all compile jars.') << {
+    configurations.compile.each { File file -> println file.name }
+}
+
+def webdirs = [ "$webAppDirName", "$webAppDirName/WEB-INF", 
+		"$webAppDirName/WEB-INF/lib", 
+		"$webAppDirName/WEB-INF/classes",
+		"$webAppDirName/WEB-INF/static",
+		"$webAppDirName/WEB-INF/views" ]
+
+task mkSrcDirs <<{
+    println "mkSrcDirs $project.name"
+
+    sourceSets.each {
+      println "<---mkdir:"+it+"--->"
+      it.java.srcDirs.each {
+	     it.mkdirs()
+      }
+      it.resources.srcDirs.each {
+	     it.mkdirs()
+      }
+   }
+   
+   webdirs.each {
+      def aa = new File( it )
+      aa.mkdirs()
+   }
+   
+}
+
+task initSourceFolders << {
+   sourceSets*.java.srcDirs*.each { it.mkdirs() }
+   sourceSets*.resources.srcDirs*.each { it.mkdirs() }
+} 
+  
+jar {
+    baseName = 'chnye-spring-javaconfig'
+    version =  '0.1.0'
+}
+
+
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.9'
+}
+
+
+gretty {
+  port = 8080
+  contextPath = '/'
+  inplace = false
+  servletContainer = 'jetty9' 
+}

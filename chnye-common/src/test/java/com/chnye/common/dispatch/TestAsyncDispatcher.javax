@@ -1,0 +1,55 @@
+package com.chnye.yese.common.dispatch;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.chnye.yese.common.tuple.Tuple3;
+import com.chnye.yese.common.tuple.TupleUtil;
+
+public class TestAsyncDispatcher {
+
+	private DefaultSyncDispatcher<Tuple3, Tuple3, Throwable> syncDispatcher;
+	
+	private DefaultAsyncDispatcher<Tuple3, Tuple3, Throwable> asyncDispatcher;
+	
+	@Before
+	public void init(){
+		syncDispatcher = new DefaultSyncDispatcher<Tuple3, Tuple3, Throwable>();
+		FttbHandler fttbHandler = new FttbHandler();
+		FtthHandler ftthHandler = new FtthHandler();
+		
+		syncDispatcher.addHandler( fttbHandler );
+		syncDispatcher.addHandler( ftthHandler );
+		
+		asyncDispatcher = new DefaultAsyncDispatcher<Tuple3, Tuple3, Throwable>( syncDispatcher );
+		asyncDispatcher.init();
+		
+	}
+	
+	
+	@Test
+	public void testFunc() throws Throwable{
+		Tuple3 fttxEvent = null;
+
+		
+		for( int i = 0; i < 10000; i++ ){
+			if( i % 2 == 0 ){
+				fttxEvent = TupleUtil.create( "FTTH", "arg2", "arg3-" + i );
+			} else {
+				fttxEvent = TupleUtil.create( "FTTB", "arg2", "arg3-" + i );
+			}
+			System.out.println( "into-------------" + i );
+			asyncDispatcher.apply( fttxEvent );
+		}
+		
+		try{
+			Thread.sleep(5000);
+		}catch(Exception ex ){
+			ex.printStackTrace();
+		}
+		System.out.println( "-------------------Main Thread exit!" );
+		
+	}
+	
+	
+}

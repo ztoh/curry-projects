@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entities key="rule02">
+
+<!-- 其实期望的格式是<database key="db01" /> -->
+<entity key="db01" type="database">
+    <map>
+    	<!-- 其实期望的格式是<key>value</key> 即<dbName>zhangsan</dbName>  -->
+        <item key="dbName" >zhangsan</item>
+    </map>
+</entity>
+<entity key="field01" type="field">
+    <map>
+        <item key="name" >lisi</item>
+        <item key="class" >com.chnye.common.function.Function2</item>
+        <item key="inparam" >${col2}</item>
+    </map>
+</entity>
+<entity key="field02" type="field">
+    <map>
+        <item key="name" >wangwu</item>
+        <item key="class" >com.chnye.common.function.Function3</item>
+        <item key="inparam" >${col3}</item>
+    </map>
+</entity>
+<entity key="checkrepeat01" type="checkrepeat">
+    <map>
+        <item key="name" >zaoliu</item>
+        <item key="class" >com.chnye.common.function.Function4</item>
+        <item key="inparam" >${col4}</item>
+    </map>
+</entity>
+
+
+</entities>

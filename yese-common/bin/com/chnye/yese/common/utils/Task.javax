@@ -1,0 +1,28 @@
+package com.chnye.yese.common.utils;
+
+//http://grepcode.com/file/repo1.maven.org/maven2/org.battelle/clodhopper-core/1.0.0/org/battelle/clodhopper/task/Task.java?av=f
+
+/*
+* @Author: anchen
+* @Date:   2016-01-18 00:45:21
+* @Last Modified by:   anchen
+* @Last Modified time: 2016-01-18 00:49:19
+*/
+
+public interface Task<V> extends Runnable, Future<V>, Cancelable {
+
+    public void addTaskListener( TaskListener listener );
+
+    public void removeTaskListener( TaskListener listener );
+
+    public boolean isBegin();
+
+    public boolean isEnded();
+
+    public String getErrorMessage();
+    public Throwable getError();
+
+    public double getProgress();
+
+
+}

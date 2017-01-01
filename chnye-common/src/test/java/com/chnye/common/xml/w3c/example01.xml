@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root name="国土资源招投标，截止日期维护返回报文 ">
+	<head>
+		<TransCode>3002</TransCode>
+		<TransDate>20150303</TransDate>
+		<TransTime>120400</TransTime>
+		<SeqNo>2302105932</SeqNo>
+	</head>
+	<body>
+		<Result>0</Result>
+		<Message>交易成功</Message>
+	</body>
+</root>

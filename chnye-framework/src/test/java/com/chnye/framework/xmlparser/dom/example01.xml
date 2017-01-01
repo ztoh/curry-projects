@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<operation version="5.0" schemaVersion="5.0" type="t86422">
+  <info author="nbfh-yingcy" createDate="2015-08-21 14:39:08" date="2015-08-24 16:31:24" displayName="86422交易对应的OPG" />
+  <processDefine>
+    <startNode id="START" target="procedureAccessOpStep0" displayName="开始">
+      <states>
+        <state id="link0" next="procedureAccessOpStep0" />
+      </states>
+      <location x="0" y="0" />
+    </startNode>
+    <opstep id="procedureAccessOpStep0" name="上主机前入库" displayName="上主机前入库" nodeType="common" type="com.icbc.ctp.jdbc.tc.opsteps.ProcedureAccessOpStep" invokeType="Sync">
+      <states>
+        <state id="link9" next="END" condition="xml:Trade/PUBLIC/RetCode != '00'" />
+        <state id="link3" next="opstep1" condition="paymode == '0'" />
+        <state id="link1" next="opstep0" />
+      </states>
+      <location x="94" y="0" />
+      <inputs>
+        <input name="id" type="java:java.lang.String" desc="存储过程ID" src="'t_86422.proc_cosp_insert'" />
+      </inputs>
+      <references>
+        <reference name="jdbcTemplate" moduleId="jdbcTemplate" />
+      </references>
+    </opstep>
+    <opstep id="opstep0" name="转帐组PSI包体" displayName="转帐组PSI包体" nodeType="common" type="com.icbc.cospn.tc.opsteps.NewFormatOpStep" invokeType="Sync">
+      <states>
+        <state id="link2" next="opstep2" />
+      </states>
+      <location x="40" y="90" />
+      <inputs>
+        <input name="formatId" type="java:java.lang.String" desc="Format定义的id" src="'10244_psi_12006'" />
+        <input name="xmlEncoding" type="java:java.lang.String" desc="生成的xml的编码" src="'GBK'" />
+      </inputs>
+      <outputs>
+        <output name="retCode" type="java:java.lang.String" target="retCode" />
+        <output name="retMsg" type="java:java.lang.String" target="retMsg" />
+        <output name="stringTarget" type="java:java.lang.String" target="sendbuf" />
+      </outputs>
+    </opstep>
+    <opstep id="opstep1" name="现金组PSI包体" displayName="现金组PSI包体" nodeType="common" type="com.icbc.cospn.tc.opsteps.NewFormatOpStep" invokeType="Sync">
+      <states>
+        <state id="link4" next="opstep2" />
+      </states>
+      <location x="137" y="90" />
+      <inputs>
+        <input name="formatId" type="java:java.lang.String" desc="Format定义的id" src="'formatId'" />
+        <input name="xmlEncoding" type="java:java.lang.String" desc="生成的xml的编码" src="'xmlEncoding'" />
+      </inputs>
+      <outputs>
+        <output name="retCode" type="java:java.lang.String" target="retCode" />
+        <output name="retMsg" type="java:java.lang.String" target="retMsg" />
+        <output name="stringTarget" type="java:java.lang.String" target="stringTarget" />
+      </outputs>
+    </opstep>
+    <opstep id="opstep2" name="组PSI包头" displayName="组PSI包头" nodeType="common" type="com.icbc.cosp.ljjf.PsiHeadOpStep" invokeType="Sync">
+      <states>
+        <state id="link5" next="opstep3" />
+      </states>
+      <location x="94" y="169" />
+      <inputs>
+        <input name="sendbuf" type="java:java.lang.String" src="sendbuf" />
+      </inputs>
+      <outputs>
+        <output name="sendbuf1" type="java:java.lang.String" target="sendbuf1" />
+      </outputs>
+    </opstep>
+    <opstep id="opstep3" name="发PSI" displayName="发PSI" nodeType="common" type="com.icbc.cosp.ljjf.SocketSendOpStep" invokeType="Sync">
+      <states>
+        <state id="link6" next="opstep4" />
+      </states>
+      <location x="94" y="233" />
+      <inputs>
+        <input name="sendStr" type="java:java.lang.String" src="sendbuf1" />
+        <input name="ip" type="java:java.lang.String" src="'109.32.13.73'" />
+        <input name="port" type="java:java.lang.String" src="'10001'" />
+        <input name="timeout" type="java:java.lang.String" src="'40000'" />
+        <input name="inEncode" type="java:java.lang.String" src="'GBK'" />
+        <input name="outEncode" type="java:java.lang.String" src="'GBK'" />
+      </inputs>
+      <outputs>
+        <output name="recvStr" type="java:java.lang.String" target="recvStr" />
+        <output name="retCode" type="java:java.lang.String" target="retCode" />
+        <output name="errCode" type="java:java.lang.String" target="errCode" />
+        <output name="errMsg" type="java:java.lang.String" target="errMsg" />
+      </outputs>
+    </opstep>
+    <opstep id="opstep4" name="解析XML" displayName="解析XML" nodeType="common" type="com.icbc.ctp.format.tc.opsteps.UnFormatOpStep" invokeType="Sync">
+      <states>
+        <state id="link7" next="procedureAccessOpStep1" />
+      </states>
+      <location x="94" y="300" />
+      <inputs>
+        <input name="formatId" type="java:java.lang.String" src="'10244_rcv'" mustInput="false" />
+        <input name="xml" type="java:java.lang.String" src="recvStr" />
+      </inputs>
+    </opstep>
+    <opstep id="procedureAccessOpStep1" name="联机缴费交易信息更新" displayName="联机缴费交易信息更新" nodeType="common" type="com.icbc.ctp.jdbc.tc.opsteps.ProcedureAccessOpStep" invokeType="Sync">
+      <states>
+        <state id="link8" next="END" />
+      </states>
+      <location x="221" y="300" />
+      <inputs>
+        <input name="id" type="java:java.lang.String" desc="存储过程ID" src="'t_86422.proc_cosp_update'" />
+      </inputs>
+      <references>
+        <reference name="jdbcTemplate" moduleId="jdbcTemplate" />
+      </references>
+    </opstep>
+    <endNode id="END" displayName="结束">
+      <location x="300" y="200" />
+    </endNode>
+  </processDefine>
+  <inputs>
+    <input name="sendbuf" type="java:java.lang.String" />
+    <input name="sendStr" type="java:java.lang.String" />
+    <input name="xml" type="java:java.lang.String" />
+    <input name="xml:Trade/PUBLIC/BRNO" type="java:java.lang.String" />
+    <input name="xml:Trade/PUBLIC/TELLERNO" type="java:java.lang.String" />
+    <input name="xml:Trade/PRIVATE/TRXSEQNO" type="java:java.lang.String" />
+    <input name="xml:Trade/PRIVATE/SUBTRXSEQNO" type="java:java.lang.String" />
+    <input name="xml:Trade/PRIVATE/preBRNO" type="java:java.lang.String" />
+    <input name="xml:Trade/PRIVATE/preTELLERNO" type="java:java.lang.String" />
+    <input name="xml:Trade/PRIVATE/Date" type="java:java.lang.String" />
+    <input name="xml:Trade/PRIVATE/Serialno" type="java:java.lang.String" />
+    <input name="iRetcode" type="java:java.lang.String" />
+    <input name="iRetmsg" type="java:java.lang.String" />
+    <input name="iHostsno" type="java:java.lang.String" />
+  </inputs>
+  <outputs>
+    <output name="retCode" type="java:java.lang.String" />
+    <output name="retMsg" type="java:java.lang.String" />
+    <output name="stringTarget" type="java:java.lang.String" />
+    <output name="sendbuf1" type="java:java.lang.String" />
+    <output name="recvStr" type="java:java.lang.String" />
+    <output name="errCode" type="java:java.lang.String" />
+    <output name="errMsg" type="java:java.lang.String" />
+    <output name="serialno" type="java:java.lang.String" />
+    <output name="amt" type="java:java.lang.String" />
+    <output name="paymode" type="java:java.lang.String" />
+    <output name="acctno" type="java:java.lang.String" />
+    <output name="xml:Trade/PUBLIC/RetCode" type="java:java.lang.String" />
+    <output name="xml:Trade/PUBLIC/RetMsg" type="java:java.lang.String" />
+  </outputs>
+</operation>
+

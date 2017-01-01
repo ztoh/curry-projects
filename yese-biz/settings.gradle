@@ -1,0 +1,5 @@
+rootProject.name = 'chnye-yese-biz'
+include ':common'
+project(':common').projectDir= new File(settingsDir,"../chnye-common")
+include ':framework'
+project(':framework').projectDir= new File(settingsDir,"../chnye-framework")

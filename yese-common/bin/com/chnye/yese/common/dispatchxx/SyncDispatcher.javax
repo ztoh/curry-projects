@@ -1,0 +1,8 @@
+package com.chnye.yese.common.dispatch;
+
+import com.chnye.yese.common.function.ThrowableFunction;
+
+public interface SyncDispatcher<T, O, E extends Throwable> extends ThrowableFunction<T, O, E> {
+	void addHandler( AcceptHandler handler );
+	void removeHandler( AcceptHandler handler );
+}

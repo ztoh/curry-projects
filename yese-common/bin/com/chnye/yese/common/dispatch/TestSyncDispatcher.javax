@@ -1,0 +1,38 @@
+package com.chnye.yese.common.dispatch;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.chnye.yese.common.tuple.Tuple3;
+import com.chnye.yese.common.tuple.TupleUtil;
+
+@SuppressWarnings("rawtypes")
+public class TestSyncDispatcher {
+
+	private DefaultSyncDispatcher<Tuple3, Tuple3, Throwable> dispatcher;
+	
+	@Before
+	public void init(){
+	
+		dispatcher = new DefaultSyncDispatcher<Tuple3, Tuple3, Throwable>();
+		FttbHandler fttbHandler = new FttbHandler();
+		FtthHandler ftthHandler = new FtthHandler();
+		
+		dispatcher.addHandler( fttbHandler );
+		dispatcher.addHandler( ftthHandler );
+	}
+	
+	@Test
+	public void testFunc() throws Throwable{
+		
+		
+		Tuple3 ftthEvent = TupleUtil.create( "FTTH", "arg2", "arg3" );
+		Tuple3 fttbEvent = TupleUtil.create( "FTTB", "arg2", "arg3" );
+		
+		for( int i = 0; i < 10; i++ ){
+			dispatcher.apply( ftthEvent );
+			dispatcher.apply( fttbEvent );
+		}
+		
+	}
+}

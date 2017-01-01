@@ -1,0 +1,7 @@
+package com.chnye.yese.common.dispatch;
+
+import com.chnye.yese.common.function.ThrowableFunction;
+
+public interface AcceptHandler<T, O, E extends Throwable> extends ThrowableFunction<T, O, E>{
+	boolean accept(T input );
+}

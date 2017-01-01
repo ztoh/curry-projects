@@ -1,0 +1,80 @@
+package com.chnye.yese.common.utils;
+
+/*
+* @Author: anchen
+* @Date:   2016-01-18 00:59:36
+* @Last Modified by:   anchen
+* @Last Modified time: 2016-01-19 20:18:23
+*/
+
+import java.util.List;
+import java.util.ArrayList;
+
+
+public class TaskEventSupport {
+
+    private List<TaskListener> listeners = new ArrayList<TaskListener>();
+    private Task<?> task;
+
+    private TaskListener[] listenerArray;
+
+    public TaskEventSupport( Task<?> task ){
+        if( task == null )
+            throw new NullPointerException();
+        this.task = task;
+    }
+
+    public void addTaskListener( TaskListener listener ){
+        if( !listeners.contains( listener ) ){
+            listeners.add( listener );
+            listenerArray = null;
+        }
+    }
+
+    public void removeTaskListener( TaskListener listener ){
+        listeners.remove( listener );
+        listenerArray = null;
+    }
+
+
+    public void fireTaskBegin(){
+        TaskListener[] tmpListeners = getListeners();
+        final int n = tmpListeners.length;
+        if( n > 0 ){
+            TaskEvent event = new TaskEvent( task, task.taskName() + " started" );
+            for( TaskListener listener : listeners ){
+                listener.taskBegin( event );
+            }
+        }
+    }
+
+    public void fireTaskMessage( String message ){
+        TaskListener[] tmpListeners = getListeners();
+        final int n = tmpListeners.length;
+        if( n > 0 ){
+            TaskEvent event = new TaskEvent( task, message );
+            for( TaskListener listener : listeners ){
+                listener.taskMessage( event );
+            }
+        }
+    }
+
+    public void fireTaskPaused(){
+        TaskListener[] tmpListeners = getListeners();
+        final int n = tmpListeners.length;
+        if( n > 0 ){
+            TaskEvent event = new TaskEvent( task, task.taskName() + " paused" );
+            for( TaskListener listener : listeners ){
+                listener.taskPaused( event );
+            }
+        }
+    }
+
+    public TaskListener[] getListeners(){
+        if( listenerArray == null ){
+            listenerArray = listeners.toArray( new TaskListener[ listeners.size() ] );
+        }
+        return listenerArray;
+    }
+
+}

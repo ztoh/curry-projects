@@ -1,0 +1,33 @@
+package com.chnye.yese.common.dispatch;
+
+import ch.qos.logback.core.joran.conditional.IfAction;
+
+import com.chnye.yese.common.tuple.Tuple3;
+import com.chnye.yese.common.tuple.TupleUtil;
+
+public class FttbHandler implements AcceptHandler<Tuple3, Tuple3, Throwable> {
+
+	@Override
+	public Tuple3 apply(Tuple3 input) throws Throwable {
+		// TODO Auto-generated method stub
+		System.out.println( "FttbHandler " + input + " Thread:" + Thread.currentThread().getId() );
+		
+		Tuple3 result = TupleUtil.create("resultb1", "resultb2", "resultb3" );
+		return result;
+	}
+
+	@Override
+	public boolean accept(Tuple3 input) {
+		// TODO Auto-generated method stub
+		String fttxType = input.first() != null ? input.first().toString() : "FTTB";
+		String terminalType = input.second() != null ? input.second().toString() : "";
+		String swtDomain = input.third() != null ? input.third().toString() : "";
+		
+		if( fttxType.equals("FTTB") ){
+			return true;
+		}
+		
+		return false;
+	}
+
+}

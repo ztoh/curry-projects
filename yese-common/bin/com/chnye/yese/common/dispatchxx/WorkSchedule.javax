@@ -1,0 +1,42 @@
+package com.chnye.yese.common.dispatch;
+
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
+
+
+import com.chnye.yese.common.runnable.ISchedule;
+
+public class WorkSchedule<T> implements ISchedule<T> {
+
+	private BlockingQueue<T> dataQueue;
+	private DefaultSyncDispatcher<T, ?, ?> syncDispatcher;
+	
+	
+	public WorkSchedule( BlockingQueue<T> dataQueue, DefaultSyncDispatcher syncDispatcher ){
+		this.dataQueue = dataQueue;
+		this.syncDispatcher = syncDispatcher;
+	}
+	
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		while( !Thread.currentThread().isInterrupted() ){
+            try{
+                consume( dataQueue );
+            } catch( Throwable t ){
+                t.printStackTrace();
+            }
+        }//end while
+	}
+
+	private void consume(BlockingQueue<T> dataQueue ) throws Throwable{
+		// TODO Auto-generated method stub
+		T node = dataQueue.poll( 100, TimeUnit.MICROSECONDS );
+		if( node == null ){
+			return;
+		}
+		//System.out.println( "consume..." + node  + " queue.size=" + dataQueue.size() );
+		syncDispatcher.apply( node );
+	}
+
+}

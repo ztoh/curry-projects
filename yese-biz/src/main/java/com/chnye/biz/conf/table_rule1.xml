@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entities key="tablerule02" type="tablerule" desc="描述一个表的写入规则">
+
+<!-- 其实期望的格式是<database key="db01" /> -->
+<entity key="db01" type="database" desc="描述表所对应的数据库的规则">
+    <map>
+    	<!-- 其实期望的格式是<key>value</key> 即<dbName>zhangsan</dbName>  -->
+        <item key="defaultValue" >zhangsan</item>
+    </map>
+</entity>
+<entity key="field01" type="field" desc="描述表中字段的映射规则">
+    <map>
+        <item key="name" >lisi</item>
+        <item key="class" >com.chnye.common.function.Function2</item>
+        <item key="inparam" >${col2}</item>
+    </map>
+</entity>
+<entity key="field02" type="field" desc="描述表中字段的映射规则">
+    <map>
+        <item key="name" >wangwu</item>
+        <item key="class" >com.chnye.common.function.Function3</item>
+        <item key="inparam" >${col3}</item>
+    </map>
+</entity>
+<entity key="checkrepeat01" type="checkrepeat" desc="描述表中记录的判断重复规则">
+    <map>
+        <item key="name" >zaoliu</item>
+        <item key="class" >com.chnye.common.function.Function4</item>
+        <item key="inparam" >${col4}</item>
+    </map>
+</entity>
+
+
+</entities>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="GBK"?>
+<root>
+	<head>
+		<TransCode>3002</TransCode>
+		<TransDate>20150303</TransDate>
+		<TransTime>120400</TransTime>
+		<SeqNo>2302105932</SeqNo>
+	</head>
+	<body>
+		<Result>0</Result>
+		<Message>交易成功</Message>
+	</body>
+</root>
